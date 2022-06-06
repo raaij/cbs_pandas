@@ -43,7 +43,7 @@ class Dataset(BaseModel):
         return self._data
 
     def _ensure_have_data(self):
-        if not self._data:
+        if self._data is None:
             target_url = f"https://beta-odata4.cbs.nl/CBS/{self.identifier}/Observations"
             self._data = self._get_odata(target_url)
 
