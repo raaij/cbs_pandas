@@ -1,0 +1,5 @@
+pydantic
+pandas
+git+https://github.com/dagnelies/finder.git
+git+https://github.com/dagnelies/pysos.git
+datetime
