@@ -2,6 +2,7 @@ import datetime as dt
 import json
 
 import pandas as pd
+import numpy as np
 import requests
 from pydantic import BaseModel
 
@@ -54,6 +55,26 @@ class Dataset(BaseModel):
     def metadata(self):
         self._ensure_have_metadata()
         return self._metadata
+
+    def visualize(self, measure: str, aggregation = np.sum, group: str = None):
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        df = self.df  # Make reference shorter
+        assert 'Date' in df.columns, "ERROR: Must have a date column!"
+        fig, ax = plt.subplots(1, 1, figsize=(15, 6))
+
+        if not group:
+            dff = df.groupby('Date').agg({measure: aggregation})
+            fig = dff.plot.bar(ax=ax)
+        else:
+            dff = df.groupby(['Date', group]).agg({measure: aggregation}).reset_index().pivot(
+                ['Date'],
+                [group],
+                [measure]
+            )
+            fig = dff.plot.bar(stacked=True, ax=ax).legend(bbox_to_anchor=(1.0, 1.0))
+        return fig
 
     def _ensure_have_data(self):
         if self._data is None:
